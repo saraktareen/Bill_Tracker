@@ -1,0 +1,113 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+
+const getCurrentDate = () => {
+  const date = new Date();
+  const day = date.getDate();
+  const month = date.toLocaleString('default', { month: 'long' });
+  const year = date.getFullYear();
+
+  let suffix = "th";
+  if (day === 1 || day === 21 || day === 31) {
+    suffix = "st";
+  } else if (day === 2 || day === 22) {
+    suffix = "nd";
+  } else if (day === 3 || day === 23) {
+    suffix = "rd";
+  }
+
+  return `${day}${suffix} ${month} ${year}`;
+};
+
+const Homepage = () => {
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.date}>{getCurrentDate()}</Text>
+        <View style={styles.profileContainer}>
+          <View style={styles.profileCircle}></View>
+          <Text style={styles.name}>Sara</Text>
+          <TouchableOpacity onPress={() => {/* Handle log out functionality */}}>
+            <Text style={styles.logoutText}>V</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.billButton}>
+          <Text style={styles.billButtonText}>Electricity Bill</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.billButton}>
+          <Text style={styles.billButtonText}>Gas Bill</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.billButton}>
+          <Text style={styles.billButtonText}>Water Bill</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: '100px',
+    alignItems: 'center',
+    backgroundColor: '#003366',
+    padding: 10,
+  },
+  date: {
+    fontSize: 16,
+    color: '#fff',
+    fontFamily: 'Poppins',
+    },
+  profileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    marginRight: 5,
+  },
+  name: {
+    fontSize: 16,
+    color: '#ffffff',
+    fontFamily: 'Poppins',
+    marginRight: 5,
+  },
+  logoutText: {
+    fontSize: 16,
+    color: '#ffffff',
+    fontFamily: 'Poppins',
+  },
+  buttonContainer: {
+    marginTop: '70px',
+    flexDirection: 'column', // To arrange children in a column
+    justifyContent: 'center', // To center the children vertically
+    display: 'flex', // Correct way to apply flexbox in React Native
+  },
+
+  billButton: {
+    backgroundColor: '#d1d9e6',
+    padding: 20,
+    borderRadius: 10,
+    marginBottom: 15,
+    marginLeft: 10,
+    marginRight: 10,
+    alignItems: 'center',
+  },
+  billButtonText: {
+    fontSize: 18,
+    color: '#000',
+  },
+});
+
+export default Homepage;
