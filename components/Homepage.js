@@ -19,7 +19,11 @@ const getCurrentDate = () => {
   return `${day}${suffix} ${month} ${year}`;
 };
 
-const Homepage = () => {
+const Homepage = ({ navigation }) => {
+  const navigateToBillListing = (billType) => {
+    navigation.navigate('BillListingScreen', { billType });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -34,13 +38,13 @@ const Homepage = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.billButton}>
+        <TouchableOpacity style={styles.billButton} onPress={() => navigateToBillListing('Electricity Bill')}>
           <Text style={styles.billButtonText}>Electricity Bill</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.billButton}>
+        <TouchableOpacity style={styles.billButton} onPress={() => navigateToBillListing('Gas Bill')}>
           <Text style={styles.billButtonText}>Gas Bill</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.billButton}>
+        <TouchableOpacity style={styles.billButton} onPress={() => navigateToBillListing('Water Bill')}>
           <Text style={styles.billButtonText}>Water Bill</Text>
         </TouchableOpacity>
       </View>
@@ -56,20 +60,22 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: '100px',
+    height: 100,
     alignItems: 'center',
     backgroundColor: '#003366',
     padding: 10,
   },
   date: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#fff',
     fontFamily: 'Poppins',
-    },
+  },
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: '10',
   },
+  
   profileCircle: {
     width: 20,
     height: 20,
@@ -89,24 +95,25 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
   },
   buttonContainer: {
-    marginTop: '70px',
-    flexDirection: 'column', // To arrange children in a column
-    justifyContent: 'center', // To center the children vertically
-    display: 'flex', // Correct way to apply flexbox in React Native
+    marginTop: 100,
+    paddingHorizontal: 21, // Adjust padding to match Figma X coordinate
+    flexDirection: 'column',
+    alignItems: 'center', // Align buttons to the left
   },
-
   billButton: {
     backgroundColor: '#d1d9e6',
-    padding: 20,
+    paddingVertical: 20, 
+    paddingHorizontal: 10, 
     borderRadius: 10,
-    marginBottom: 15,
-    marginLeft: 10,
-    marginRight: 10,
+    marginBottom: 30,
+    width: 347, 
+    height: 78, 
     alignItems: 'center',
   },
   billButtonText: {
-    fontSize: 18,
+    fontSize: 25,
     color: '#000',
+    marginTop: '10',
   },
 });
 

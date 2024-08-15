@@ -6,45 +6,35 @@ import SplashScreen from './components/Splashscreen';
 import Login from './components/Login';
 import Homepage from './components/Homepage';
 import SignUp from './components/SignUp';
-
+import BillListingScreen from './components/BillListingScreen';
 
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [activeScreen, setActiveScreen] = useState('splash');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setActiveScreen('login');
-    }, 2000); // 2 seconds duration for the splash screen
+      setIsLoading(false); // Stop showing splash screen after 2 seconds
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  const linking = {
-    prefixes: ['http://localhost:8081'],
-    config: {
-      screens: {
-        Login: 'login',
-        SignUp: 'signup',
-        Homepage: 'home',
-      },
-    },
-  };
-
   return (
-    <NavigationContainer linking={linking}>
-      <View style={styles.container}>
-        {activeScreen === 'splash' && <SplashScreen />}
-        {activeScreen === 'login' && (
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {isLoading ? (
+          <Stack.Screen name="Splash" component={SplashScreen} />
+        ) : (
+          <>
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="Homepage" component={Homepage} />
-            
-          </Stack.Navigator>
+            <Stack.Screen name="BillListingScreen" component={BillListingScreen} />
+          </>
         )}
-      </View>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
@@ -53,6 +43,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
   },
 });
