@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons'; // Install this package if not already available
-import RNPickerSelect from 'react-native-picker-select'; // Import the Picker
+import { Ionicons } from '@expo/vector-icons';
+import RNPickerSelect from 'react-native-picker-select';
 
 const BillListingScreen = ({ route }) => {
-  const { billType } = route.params; // Extract bill type from route params
-  const navigation = useNavigation(); // Hook to access navigation
+  const { billType } = route.params;
+  const navigation = useNavigation();
 
-  // Set default values
   const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth(); // 0-based index for months
+  const currentMonth = new Date().getMonth();
 
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
@@ -18,13 +17,11 @@ const BillListingScreen = ({ route }) => {
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState({});
 
-  // Generate month options
   const months = Array.from({ length: 12 }, (_, i) => ({
     label: new Date(0, i).toLocaleString('default', { month: 'long' }),
     value: i,
   }));
 
-  // Generate year options for the last 10 years
   const years = Array.from({ length: 10 }, (_, i) => ({
     label: (currentYear - i).toString(),
     value: currentYear - i,
@@ -47,8 +44,8 @@ const BillListingScreen = ({ route }) => {
     if (!totalBill) {
       errors.totalBill = 'Total bill is required.';
       isValid = false;
-    } else if (isNaN(totalBill)) {
-      errors.totalBill = 'Total bill must be a number.';
+    } else if (!/^\d{1,3}(,\d{3})*(\.\d{1,2})?$/.test(totalBill)) {
+      errors.totalBill = 'Total bill must be a valid number.';
       isValid = false;
     }
 
@@ -56,10 +53,44 @@ const BillListingScreen = ({ route }) => {
     return isValid;
   };
 
+  const handleTotalBillChange = (value) => {
+    const numericValue = value.replace(/,/g, '');
+
+    if (/^\d*\.?\d{0,2}$/.test(numericValue)) {
+      const formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      setTotalBill(formattedValue);
+
+      if (errors.totalBill) {
+        setErrors((prevErrors) => ({ ...prevErrors, totalBill: null }));
+      }
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        totalBill: 'Total bill must be a valid number.',
+      }));
+    }
+  };
+
+  const handleMonthChange = (value) => {
+    if (value === null) {
+      setMonth(currentMonth); // Reset to current month if placeholder is selected
+    } else {
+      setMonth(value);
+    }
+  };
+
+  const handleYearChange = (value) => {
+    if (value === null) {
+      setYear(currentYear); // Reset to current year if placeholder is selected
+    } else {
+      setYear(value);
+    }
+  };
+
   const handleSubmit = () => {
     if (validate()) {
-      // Handle form submission
-      console.log('Form submitted:', { month, year, totalBill, note });
+      const numericTotalBill = totalBill.replace(/,/g, '');
+      console.log('Form submitted:', { month, year, totalBill: numericTotalBill, note });
     }
   };
 
@@ -77,14 +108,14 @@ const BillListingScreen = ({ route }) => {
 
         <View style={styles.pickerContainer}>
           <RNPickerSelect
-            onValueChange={(value) => setMonth(value)}
+            onValueChange={handleMonthChange}
             items={months}
             value={month}
             style={pickerSelectStyles}
             placeholder={{ label: 'Month', value: null }}
           />
           <RNPickerSelect
-            onValueChange={(value) => setYear(value)}
+            onValueChange={handleYearChange}
             items={years}
             value={year}
             style={pickerSelectStyles}
@@ -94,16 +125,16 @@ const BillListingScreen = ({ route }) => {
         {errors.month && <Text style={styles.errorText}>{errors.month}</Text>}
         {errors.year && <Text style={styles.errorText}>{errors.year}</Text>}
 
-        <Text style={styles.label}>Write the amount of the bill</Text>
+        <Text style={styles.label}>Write the amount of the bill:</Text>
         <TextInput
           style={styles.textInput}
           keyboardType="numeric"
           value={totalBill}
-          onChangeText={setTotalBill}
+          onChangeText={handleTotalBillChange}
         />
         {errors.totalBill && <Text style={styles.errorText}>{errors.totalBill}</Text>}
 
-        <Text style={styles.label}>You can add any additional note for this bill</Text>
+        <Text style={styles.label}>You can add any additional note for this bill:</Text>
         <TextInput
           style={[styles.textInput, styles.noteInput]}
           multiline
@@ -169,7 +200,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#003366',
     padding: 15,
-    height: 80,
+    height: 90,
+    paddingTop: 50,
   },
   headerTitle: {
     color: '#ffffff',
@@ -201,13 +233,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f1f1',
     marginBottom: 20,
   },
+  textInputBill: {
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    backgroundColor: '#f1f1f1',
+    marginBottom: 5,
+  },
   noteInput: {
     height: 100,
   },
   errorText: {
     color: 'red',
     fontSize: 12,
-    marginTop: 5,
+    marginBottom: 10,
   },
   submitButton: {
     backgroundColor: '#003366',

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, Pressable } from 'react-native';
 
 const getCurrentDate = () => {
   const date = new Date();
@@ -20,8 +20,19 @@ const getCurrentDate = () => {
 };
 
 const Homepage = ({ navigation }) => {
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+
   const navigateToBillListing = (billType) => {
     navigation.navigate('BillListingScreen', { billType });
+  };
+
+  const handleLogout = () => {
+    // Handle logout functionality
+    console.log("Logging out...");
+  };
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!isDropdownVisible);
   };
 
   return (
@@ -29,11 +40,24 @@ const Homepage = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.date}>{getCurrentDate()}</Text>
         <View style={styles.profileContainer}>
-          <View style={styles.profileCircle}></View>
           <Text style={styles.name}>Sara</Text>
-          <TouchableOpacity onPress={() => {/* Handle log out functionality */}}>
-            <Text style={styles.logoutText}>V</Text>
+          <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
+            <Image source={require('../assets/dropdown-white.png')} style={styles.dropdownImage} />
           </TouchableOpacity>
+          <Modal
+            transparent={true}
+            visible={isDropdownVisible}
+            animationType="fade"
+            onRequestClose={toggleDropdown}
+          >
+            <Pressable style={styles.modalOverlay} onPress={toggleDropdown}>
+              <View style={styles.dropdownMenu}>
+                <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+                  <Text style={styles.logoutText}>Logout</Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </Modal>
         </View>
       </View>
 
@@ -60,10 +84,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 100,
+    height: 110,
     alignItems: 'center',
     backgroundColor: '#003366',
-    padding: 10,
+    paddingTop: 30,
+    paddingLeft: 20,
+    paddingRight: 20
   },
   date: {
     fontSize: 14,
@@ -73,9 +99,8 @@ const styles = StyleSheet.create({
   profileContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: '10',
+    position: 'relative', // Enable positioning of the dropdown menu
   },
-  
   profileCircle: {
     width: 20,
     height: 20,
@@ -87,33 +112,60 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#ffffff',
     fontFamily: 'Poppins',
+    marginRight: 10,
+    marginLeft: 3,
+  },
+  dropdownButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dropdownImage: {
+    height: 15,
+    width: 15,
     marginRight: 5,
   },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dropdownMenu: {
+    borderRadius: 5,
+    padding: 5,
+    position: 'absolute', // Position dropdown menu below the image
+    top: 73, // Adjust based on image size
+    right: 20, // Align menu with the right edge of the dropdown image
+  },
+  logoutButton: {
+    backgroundColor: '#ffffff',
+    borderRadius: 5,
+    paddingVertical: 7,
+    paddingHorizontal: 7,
+  },
   logoutText: {
-    fontSize: 16,
-    color: '#ffffff',
-    fontFamily: 'Poppins',
+    color: '#003366',
+    fontSize: 13,
+    textAlign: 'center',
   },
   buttonContainer: {
     marginTop: 100,
-    paddingHorizontal: 21, // Adjust padding to match Figma X coordinate
+    paddingHorizontal: 21,
     flexDirection: 'column',
-    alignItems: 'center', // Align buttons to the left
+    alignItems: 'center',
   },
   billButton: {
     backgroundColor: '#d1d9e6',
-    paddingVertical: 20, 
-    paddingHorizontal: 10, 
+    paddingVertical: 20,
+    paddingHorizontal: 10,
     borderRadius: 10,
     marginBottom: 30,
-    width: 347, 
-    height: 78, 
+    width: 320,
+    height: 78,
     alignItems: 'center',
   },
   billButtonText: {
     fontSize: 25,
     color: '#000',
-    marginTop: '10',
   },
 });
 
